@@ -24,11 +24,12 @@ router.post("/", (req, res) => {
 
         const data = { ...rows[0] }
         data.password = 'REDACTED'
-
         const token = jwt.sign(data, 'secret')
         res.json({
           msg: 'Login successful',
-          token
+          token,
+          id: rows[0].id,
+          name: rows[0].name
         })
       })
   })

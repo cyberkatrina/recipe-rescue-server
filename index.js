@@ -83,4 +83,51 @@ app.delete('/users/:id', authToken, (req, res) => {
 })
 
 
+// Express route for updating user likes
+app.put('/users/:id/likes', authToken, (req, res) => {
+  const { id } = req.params;
+  const { likes } = req.body;
+
+  pool.query(
+      `UPDATE users SET likes = ? WHERE id = ?`, 
+      [JSON.stringify(likes), id], 
+      (err, result) => {
+          if (err) {
+              console.error("Error updating likes:", err);
+              return res.status(500).send("Error updating likes");
+          }
+          res.json({ message: "Likes updated successfully" });
+      }
+  );
+});
+
+// GET - Retrieve user's liked recipes by user ID
+app.get('/users/:id/likes', authToken, (req, res) => {
+  const { id } = req.params;
+  
+  // Query to get the likes from the user's record
+  pool.query(
+    `SELECT likes FROM ?? WHERE ?? = ?`, 
+    ["users", "id", id],
+    (err, rows) => {
+      if (err) {
+        console.error("Error fetching user likes:", err);
+        return res.status(500).json({ error: "Error fetching user likes" });
+      }
+
+      // Check if the user exists and has likes
+      if (rows.length > 0) {
+        const likes = rows[0].likes ? JSON.parse(rows[0].likes) : [];
+        res.json({ likes }); // Send back the liked recipes
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    }
+  );
+});
+
+
+
+
+
 app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`))

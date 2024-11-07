@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
               console.error("Insert user error:", err);
               return res.status(500).json({ message: "Server error." });
             }
-
+            console.log(name)
             // Generate a token
             const token = jwt.sign(
               { id: result.insertId, email },
@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
             );
 
             // Respond with the token and user info
-            res.status(201).json({ token, userId: result.insertId });
+            res.status(201).json({ token, id: result.insertId, name});
           }
         );
       }
